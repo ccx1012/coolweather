@@ -1,6 +1,7 @@
 package com.coolweather.android;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -86,6 +87,12 @@ public class ChooseAreaFragment extends Fragment{
                 }else if (currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }else if (currentLevel == LEVEL_COUNTY){
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -138,6 +145,21 @@ public class ChooseAreaFragment extends Fragment{
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             currentLevel = LEVEL_CITY;
+//            try {
+//                dataList.clear();
+//                for (City c : cityList) {
+//                    dataList.add(c.getCityName());
+//                }
+//                adapter.notifyDataSetChanged();
+//                listView.setSelection(0);
+//                currentLevel = LEVEL_CITY;
+//            } catch (NullPointerException e) {
+//                String url = getResources().getString(R.string.url_query_province);
+//                queryFromServer(url, "province");
+//                int provinceCode = selectedProvince.getProvinceCode();
+//                url = getResources().getString(R.string.url_query_province) + provinceCode;
+//                queryFromServer(url, "city");
+//            }
         }else {
             int provinceCode = selectedProvince.getProvinceCode();
             String address = "http://guolin.tech/api/china/" + provinceCode;
@@ -220,6 +242,7 @@ public class ChooseAreaFragment extends Fragment{
         if (progressDialog == null){
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("正在加载...");
+            //dialog出现后点击屏幕不会消失，按返回键消失
             progressDialog.setCanceledOnTouchOutside(false);
         }
         progressDialog.show();
